@@ -7,8 +7,10 @@ In this process, you put a binary number (base 2) and convert it into its equiva
 For instance, to convert the binary number 1010 to decimal:
 1 * 2^3 + 0 * 2^2 + 1 * 2^1 + 0 * 2^0 = 8 + 0 + 2 + 0 = 10 (decimal)
 
+0001 to decimal:
 0 * 2^3 + 0 * 2^2 + 0 * 2^1 + 1 * 2^0 = 0 + 0 + 0 + 1 = 1 (decimal)
 
+101010 to decimal:
 1 * 2^5 + 0 * 2^4 + 1 * 2^3 + 0 * 2^2 + 1 * 2^1 + 0 * 2^0
 = 32 + 0 + 8 + 0 + 2 + 0
 = 42 (decimal)
