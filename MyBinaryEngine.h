@@ -30,6 +30,8 @@ private:
 	void updateBinaryCode();
 	void renderBinaryCode();
 
+	void renderUIelements();
+
 	//Variables
 	float centerX; //Center of the screen by X
 	float centerY; //Center of the screen by Y
@@ -44,6 +46,7 @@ private:
 	//Window
 	std::unique_ptr< sf::RenderWindow> window;
 	sf::VideoMode videoMode;
+	sf::RectangleShape optionsPanel;
 
 	//Events
 	sf::Event eventAction;
@@ -57,8 +60,18 @@ private:
 	sf::RectangleShape outputPanel;
 	sf::Text outputText;
 
+	//Buttons
+	sf::ConvexShape ConvertButton;
+	sf::ConvexShape ResetButton;
+
 	//Font
 	sf::Font binaryFont;
+	sf::Font UIfont;
+
+	//UI
+	sf::Text DescriptionUI;
+	sf::Text UserInputUI;
+	sf::Text UserOutputUI;
 
 	//Storage
 	std::vector<sf::Text> binaryCode_Storage;
@@ -77,5 +90,9 @@ private:
 
 	void initOutputPanel();
 	void initOutputText();
+
+	void initOptionsPanel();
+
+	void initUIelements();
 };
 #endif // !MY_BINARY_ENGINE

@@ -17,6 +17,11 @@ MyBinaryEngine::MyBinaryEngine()
 	this->initOutputPanel();
 	//Initialize the output user text
 	this->initOutputText();
+	//Initialize the options panel
+	this->initOptionsPanel();
+	//Initialize the UI elements
+	this->initUIelements();
+
 }
 MyBinaryEngine::~MyBinaryEngine()
 {
@@ -61,6 +66,8 @@ void MyBinaryEngine::render()
 
 	this->renderBinaryCode();
 
+	this->renderUIelements();
+
 	//Display the updated frame
 	this->window->display();
 }
@@ -72,6 +79,9 @@ void MyBinaryEngine::pollEvents()
 	{
 		switch (this->eventAction.type)
 		{
+		case sf::Event::Closed:
+			this->window->close();
+			break;
 		case sf::Event::KeyPressed:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 			{
@@ -103,12 +113,12 @@ void MyBinaryEngine::pollEvents()
 						std::istringstream r(tempStr);
 						char c;
 						size_t power{ tempStr.size() - 1 };
-						int num{ 0 };
+						unsigned long long num{ 0 };
 						while (r >> c)
 						{
 							if (c != '0')
 							{
-								num += static_cast<int>(c - '0') * (pow(2, power));
+								num += static_cast<unsigned long long>(c - '0') * (pow(2, power));
 							}
 							--power;
 						}
@@ -171,29 +181,43 @@ void MyBinaryEngine::updateBinaryCode()
 		this->outputText.setString("");
 		this->binaryCode_Storage.clear();
 	}
+
+	if (!this->userPanel.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		this->userRequest = false;
+	}
 }
 void MyBinaryEngine::renderBinaryCode()
 {
 	this->window->draw(this->userPanel);
+
+	this->window->draw(this->outputPanel);
+	this->window->draw(this->outputText);
+
+	this->window->draw(this->optionsPanel);
+
 	for (auto& part : this->binaryCode_Storage)
 	{
 		part.setPosition(sf::Vector2f(this->userPanel.getPosition().x + 5.0f, this->userPanel.getPosition().y + 5.0f));
 		this->window->draw(part);
 	}
+}
 
-	if (!this->userRequest)
-	{
-		if (this->userOutputRequest)
-		{
-			this->window->draw(this->outputPanel);
-		}
-		this->window->draw(this->outputText);
-	}
+void MyBinaryEngine::renderUIelements()
+{
+	this->window->draw(this->DescriptionUI);
+	this->window->draw(this->UserInputUI);
+	this->window->draw(this->UserOutputUI);
 }
 
 //Init Engine functions
 void MyBinaryEngine::initVariables()
 {
+	/*
+	  @return void
+	  - Initialize the variables/members.
+	*/
+
 	this->userInputString = "";
 	this->maxChars = 30;
 	this->userRequest = false;
@@ -202,7 +226,11 @@ void MyBinaryEngine::initVariables()
 }
 void MyBinaryEngine::initWindow()
 {
-	this->videoMode.height = 210;
+	/*
+	  @return void
+	  - Initialize the render window.
+	*/
+	this->videoMode.height = 200;
 	this->videoMode.width = 500;
 
 	this->window = std::make_unique<sf::RenderWindow> (sf::VideoMode(this->videoMode.width, this->videoMode.height), "MyBinary", sf::Style::Titlebar | sf::Style::Close);
@@ -215,16 +243,31 @@ void MyBinaryEngine::initWindow()
 }
 void MyBinaryEngine::initFont()
 {
+	/*
+	  @return void
+	  - Initialize the font.
+	*/
+
 	if (!this->binaryFont.loadFromFile("Source/Font/BinaryFont.ttf"))
 	{
 		std::cerr << "[ERROR] can't load BinaryFont.ttf\n";
+	}
+
+	if (!this->UIfont.loadFromFile("Source/Font/BinaryFont_Bold.otf"))
+	{
+		std::cerr << "[ERROR] can't load BinaryFont_Bold.ttf\n";
 	}
 }
 
 void MyBinaryEngine::initUserPanel()
 {
+	/*
+	  @return void
+	  - Initialize the input user panel.
+	*/
+
 	this->userPanel.setPosition(this->centerX - 150.0f, this->centerY - 30.0f);
-	this->userPanel.setSize(sf::Vector2f(350.0f, 35.0f));
+	this->userPanel.setSize(sf::Vector2f(370.0f, 25.0f));
 	this->userPanel.setOutlineColor(sf::Color::Black);
 	this->userPanel.setOutlineThickness(1.0f);
 }
@@ -244,8 +287,13 @@ void MyBinaryEngine::initUserText()
 
 void MyBinaryEngine::initOutputPanel()
 {
+	/*
+	  @return void
+	  - Initialize the output panel.
+	*/
+
 	this->outputPanel.setPosition(this->centerX - 150.0f, this->centerY + 15.0f);
-	this->outputPanel.setSize(sf::Vector2f(150.0f, 35.0f));
+	this->outputPanel.setSize(sf::Vector2f(150.0f, 25.0f));
 	this->outputPanel.setOutlineColor(sf::Color::Black);
 	this->outputPanel.setOutlineThickness(1.0f);
 }
@@ -262,4 +310,46 @@ void MyBinaryEngine::initOutputText()
 	this->outputText.setFillColor(sf::Color::Black); // Set the text color
 	this->outputText.setString("NONE");
 	this->outputText.setPosition(sf::Vector2f(this->centerX, this->centerY + 100000.0f));
+}
+
+void MyBinaryEngine::initOptionsPanel()
+{
+	/*
+	  @return void
+	  - Initialize the options panel.
+	*/
+
+	this->optionsPanel.setPosition(this->centerX - 250.0f, this->centerY + 55.0f);
+	this->optionsPanel.setFillColor(sf::Color(238, 238, 238));
+	this->optionsPanel.setSize(sf::Vector2f(500.0f, 70.0f));
+	this->optionsPanel.setOutlineColor(sf::Color::Black);
+}
+
+void MyBinaryEngine::initUIelements()
+{
+	/*
+	  @return void
+	  - Initialize the UI elements.
+	*/
+
+	//Description UI
+	this->DescriptionUI.setFont(this->UIfont);
+	this->DescriptionUI.setCharacterSize(13);
+	this->DescriptionUI.setFillColor(sf::Color::Black);
+	this->DescriptionUI.setString("Type the binary code or paste it,\nand the software will convert it to decimal for you.");
+	this->DescriptionUI.setPosition(sf::Vector2f(this->centerX - 154.0f, this->centerY - 85.0f));
+
+	//User input UI
+	this->UserInputUI.setFont(this->UIfont);
+	this->UserInputUI.setCharacterSize(13);
+	this->UserInputUI.setFillColor(sf::Color::Black);
+	this->UserInputUI.setString("Binary Code:");
+	this->UserInputUI.setPosition(sf::Vector2f(this->centerX - 245.0f, this->centerY - 25.0f));
+
+	//User output UI
+	this->UserOutputUI.setFont(this->UIfont);
+	this->UserOutputUI.setCharacterSize(13);
+	this->UserOutputUI.setFillColor(sf::Color::Black);
+	this->UserOutputUI.setString("To Decimal:");
+	this->UserOutputUI.setPosition(sf::Vector2f(this->centerX - 243.0f, this->centerY + 20.0f));
 }
