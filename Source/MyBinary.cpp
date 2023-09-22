@@ -3,7 +3,7 @@
 
 #include "MyBinaryEngine.h"
 
-int main()
+int WinMain()
 {
     std::unique_ptr<MyBinaryEngine> MyBinary = std::make_unique<MyBinaryEngine>();
 
