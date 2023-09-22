@@ -139,18 +139,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MyBinary.cpp" />
-    <ClCompile Include="MyBinaryEngine.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="MyBinaryEngine.h" />
-    <ClInclude Include="resource1.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="MyBinary1.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="C:\Users\HeroZ\Downloads\MyBinary_Logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\MyBinaryEngine.h" />
+    <ClInclude Include="Source\resource1.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\MyBinary.cpp" />
+    <ClCompile Include="Source\MyBinaryEngine.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
