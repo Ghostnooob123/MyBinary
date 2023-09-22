@@ -144,6 +144,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyBinaryEngine.h" />
+    <ClInclude Include="resource1.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MyBinary1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\HeroZ\Downloads\MyBinary_Logo.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

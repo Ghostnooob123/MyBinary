@@ -41,12 +41,16 @@ private:
 	bool userRequest;
 	bool userOutputRequest;
 
+
 	std::string letters;
 
 	//Window
 	std::unique_ptr< sf::RenderWindow> window;
 	sf::VideoMode videoMode;
 	sf::RectangleShape optionsPanel;
+	sf::Texture logo;
+	sf::Sprite logoSprite;
+	sf::Image icon;
 
 	//Events
 	sf::Event eventAction;
@@ -61,8 +65,10 @@ private:
 	sf::Text outputText;
 
 	//Buttons
-	sf::ConvexShape ConvertButton;
-	sf::ConvexShape ResetButton;
+	sf::RectangleShape ConvertButton;
+	sf::Text Convert_UI;
+	sf::RectangleShape ResetButton;
+	sf::Text Reset_UI;
 
 	//Font
 	sf::Font binaryFont;
@@ -92,7 +98,9 @@ private:
 	void initOutputText();
 
 	void initOptionsPanel();
+	void initButtons();
 
 	void initUIelements();
+	void initMyBinaryLogo();
 };
 #endif // !MY_BINARY_ENGINE

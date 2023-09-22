@@ -19,8 +19,12 @@ MyBinaryEngine::MyBinaryEngine()
 	this->initOutputText();
 	//Initialize the options panel
 	this->initOptionsPanel();
+	//Initialize the buttons
+	this->initButtons();
 	//Initialize the UI elements
 	this->initUIelements();
+	//Initialize the Logo
+	this->initMyBinaryLogo();
 
 }
 MyBinaryEngine::~MyBinaryEngine()
@@ -126,7 +130,6 @@ void MyBinaryEngine::pollEvents()
 						this->outputText.setString(std::to_string(num));
 						this->outputText.setPosition(this->outputPanel.getPosition().x + 5.0f, this->outputPanel.getPosition().y + 5.0f);
 
-						this->userOutputRequest = true;
 						this->userRequest = false;
 						this->binaryCode_Storage.clear();
 					}
@@ -173,13 +176,22 @@ void MyBinaryEngine::updateMousePos()
 
 void MyBinaryEngine::updateBinaryCode()
 {
-	if (this->userPanel.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (this->ResetButton.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
-		this->userRequest = true;
 		this->userOutputRequest = false;
 		this->userInputString.clear();
 		this->outputText.setString("");
 		this->binaryCode_Storage.clear();
+	}
+
+	if (this->ConvertButton.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		this->userOutputRequest = true;
+	}
+
+	if (this->userPanel.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		this->userRequest = true;
 	}
 
 	if (!this->userPanel.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -192,15 +204,23 @@ void MyBinaryEngine::renderBinaryCode()
 	this->window->draw(this->userPanel);
 
 	this->window->draw(this->outputPanel);
-	this->window->draw(this->outputText);
+
+	if (this->userOutputRequest)
+	{
+		this->window->draw(this->outputText);
+	}
 
 	this->window->draw(this->optionsPanel);
+	this->window->draw(this->ConvertButton);
+	this->window->draw(this->ResetButton);
 
 	for (auto& part : this->binaryCode_Storage)
 	{
 		part.setPosition(sf::Vector2f(this->userPanel.getPosition().x + 5.0f, this->userPanel.getPosition().y + 5.0f));
 		this->window->draw(part);
 	}
+
+	this->window->draw(this->logoSprite);
 }
 
 void MyBinaryEngine::renderUIelements()
@@ -208,6 +228,9 @@ void MyBinaryEngine::renderUIelements()
 	this->window->draw(this->DescriptionUI);
 	this->window->draw(this->UserInputUI);
 	this->window->draw(this->UserOutputUI);
+
+	this->window->draw(this->Convert_UI);
+	this->window->draw(this->Reset_UI);
 }
 
 //Init Engine functions
@@ -233,7 +256,7 @@ void MyBinaryEngine::initWindow()
 	this->videoMode.height = 200;
 	this->videoMode.width = 500;
 
-	this->window = std::make_unique<sf::RenderWindow> (sf::VideoMode(this->videoMode.width, this->videoMode.height), "MyBinary", sf::Style::Titlebar | sf::Style::Close);
+	this->window = std::make_unique<sf::RenderWindow>(sf::VideoMode(this->videoMode.width, this->videoMode.height), "MyBinary", sf::Style::Titlebar | sf::Style::Close);
 	this->window->setPosition(sf::Vector2i(700, 400));
 	this->window->setFramerateLimit(165);
 
@@ -324,6 +347,39 @@ void MyBinaryEngine::initOptionsPanel()
 	this->optionsPanel.setSize(sf::Vector2f(500.0f, 70.0f));
 	this->optionsPanel.setOutlineColor(sf::Color::Black);
 }
+void MyBinaryEngine::initButtons()
+{
+	/*
+	  @return void
+	  - Initialize the UI elements.
+	*/
+
+	//Convert Button and it's UI's
+	this->ConvertButton.setFillColor(sf::Color::White);
+	this->ConvertButton.setOutlineColor(sf::Color::Black);
+	this->ConvertButton.setOutlineThickness(1.0f);
+	this->ConvertButton.setSize(sf::Vector2f(80.0f, 25.0f));
+	this->ConvertButton.setPosition(sf::Vector2f(this->centerX - 60.0f, this->centerY + 64.0f));
+
+	this->Convert_UI.setFont(this->UIfont);
+	this->Convert_UI.setCharacterSize(13);
+	this->Convert_UI.setFillColor(sf::Color::Black);
+	this->Convert_UI.setString("Convert");
+	this->Convert_UI.setPosition(sf::Vector2f(this->centerX - 48.0f, this->centerY + 68.0f));
+
+	//Reset Button and it's UI's
+	this->ResetButton.setFillColor(sf::Color::White);
+	this->ResetButton.setOutlineColor(sf::Color::Black);
+	this->ResetButton.setOutlineThickness(1.0f);
+	this->ResetButton.setSize(sf::Vector2f(80.0f, 25.0f));
+	this->ResetButton.setPosition(sf::Vector2f(this->centerX + 50.0f, this->centerY + 64.0f));
+
+	this->Reset_UI.setFont(this->UIfont);
+	this->Reset_UI.setCharacterSize(13);
+	this->Reset_UI.setFillColor(sf::Color::Black);
+	this->Reset_UI.setString("Reset");
+	this->Reset_UI.setPosition(sf::Vector2f(this->centerX + 70.0f, this->centerY + 68.0f));
+}
 
 void MyBinaryEngine::initUIelements()
 {
@@ -336,7 +392,7 @@ void MyBinaryEngine::initUIelements()
 	this->DescriptionUI.setFont(this->UIfont);
 	this->DescriptionUI.setCharacterSize(13);
 	this->DescriptionUI.setFillColor(sf::Color::Black);
-	this->DescriptionUI.setString("Type the binary code or paste it,\nand the software will convert it to decimal for you.");
+	this->DescriptionUI.setString("Type the binary code or paste it,\nand MyBinary will convert it to decimal for you.");
 	this->DescriptionUI.setPosition(sf::Vector2f(this->centerX - 154.0f, this->centerY - 85.0f));
 
 	//User input UI
@@ -352,4 +408,23 @@ void MyBinaryEngine::initUIelements()
 	this->UserOutputUI.setFillColor(sf::Color::Black);
 	this->UserOutputUI.setString("To Decimal:");
 	this->UserOutputUI.setPosition(sf::Vector2f(this->centerX - 243.0f, this->centerY + 20.0f));
+}
+void MyBinaryEngine::initMyBinaryLogo()
+{
+
+	if (!this->logo.loadFromFile("Source/Logo/MyBinary_Logo.png"))
+	{
+		std::cerr << "[ERROR] Can't load Source/Logo/MyBinary_Logo.png\n";
+	}
+
+	this->logoSprite.setTexture(this->logo);
+	this->logoSprite.setPosition(sf::Vector2f(this->centerX - 250.0f, this->centerY - 90.0f));
+	this->logoSprite.setScale(sf::Vector2f(0.3f, 0.3f));
+
+	if (!this->icon.loadFromFile("Source/Logo/MyBinary_Logo.png"))
+	{
+		std::cerr << "[ERROR] Can't load Source/Logo/MyBinary_Logo.png\n";
+	}
+
+	this->window->setIcon(this->icon.getSize().x, this->icon.getSize().y, this->icon.getPixelsPtr());
 }
