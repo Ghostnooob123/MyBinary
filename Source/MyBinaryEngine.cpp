@@ -87,10 +87,20 @@ void MyBinaryEngine::pollEvents()
 			this->window->close();
 			break;
 		case sf::Event::KeyPressed:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+			/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 			{
-				this->window->close();
-			}
+				if (--this->insertPos < 0)
+				{
+					++this->insertPos;
+				}
+			}	
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			{
+				if (++this->insertPos > this->userInputString.length())
+				{
+					--this->insertPos;
+				}
+			}*/
 			break;
 		case sf::Event::TextEntered:
 			if (this->userRequest)
@@ -109,6 +119,12 @@ void MyBinaryEngine::pollEvents()
 						//Clear the input string for new input when Enter is pressed
 						std::string tempStr;
 						tempStr = this->binaryCode_Storage.back().getString();
+						if (tempStr.back() == '<')
+						{
+							tempStr.pop_back();
+							this->userInputString.pop_back();
+						}
+
 						if (tempStr.back() == ' ')
 						{
 							tempStr.pop_back();
@@ -131,10 +147,19 @@ void MyBinaryEngine::pollEvents()
 						this->outputText.setPosition(this->outputPanel.getPosition().x + 5.0f, this->outputPanel.getPosition().y + 5.0f);
 
 						this->userRequest = false;
+						/*this->insertPos = 0;*/
+						this->ConvertRequest = true;
+						this->typeSymbol = 0;
 						this->binaryCode_Storage.clear();
 					}
 					else
 					{
+						if (this->typeSymbol == 1)
+						{
+							this->binaryCode_Storage.pop_back();
+							this->typeSymbol = 2;
+						}
+
 						//Check if the char is backspace
 						if (this->eventAction.text.unicode != '0' && this->eventAction.text.unicode != '1')
 						{
@@ -149,8 +174,23 @@ void MyBinaryEngine::pollEvents()
 							continue;
 						}
 						//Append the entered character to the input string
+						
+						//std::string temp;
+						//for (auto& c : this->userInputString)
+						//	if (c != '|')
+						//		temp += c;
+						//this->userInputString = std::move(temp);
+						//this->userInputString.insert(this->insertPos, 1, static_cast<char>(this->eventAction.text.unicode));
+
+						if (this->userInputString.length() >= 1)
+						{
+							this->userInputString.pop_back();
+						}
 						this->userInputString += static_cast<char>(this->eventAction.text.unicode);
 						this->binaryCode_Storage.clear();
+						this->userInputString.push_back('<');
+
+						//this->insertPos = static_cast<int>(this->userInputString.length());
 					}
 					//Update the text in the GUI
 					sf::Text userInputText = this->userText;
@@ -179,19 +219,29 @@ void MyBinaryEngine::updateBinaryCode()
 	if (this->ResetButton.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
 		this->userOutputRequest = false;
+		this->ConvertRequest = false;
 		this->userInputString.clear();
 		this->outputText.setString("");
 		this->binaryCode_Storage.clear();
+
+		/*this->insertPos = 0;*/
 	}
 
-	if (this->ConvertButton.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (this->ConvertButton.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->ConvertRequest)
 	{
 		this->userOutputRequest = true;
 	}
 
-	if (this->userPanel.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (this->userPanel.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && !this->ConvertRequest)
 	{
 		this->userRequest = true;
+		if (this->typeSymbol != 1 && this->typeSymbol != 2)
+		{
+			sf::Text userInputText = this->userText;
+			userInputText.setString("<");
+			this->binaryCode_Storage.push_back(userInputText);
+			this->typeSymbol = 1;
+		}
 	}
 
 	if (!this->userPanel.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -242,10 +292,16 @@ void MyBinaryEngine::initVariables()
 	*/
 
 	this->userInputString = "";
-	this->maxChars = 30;
+	this->maxChars = 40;
 	this->userRequest = false;
 
-	this->letters = " abcdefghijklmnopqrstuvwxyz";
+	/*this->insertPos = 0;*/
+
+	this->typeSymbol = 0;
+
+	this->ConvertRequest = false;
+
+	/*this->letters = " abcdefghijklmnopqrstuvwxyz";*/
 }
 void MyBinaryEngine::initWindow()
 {

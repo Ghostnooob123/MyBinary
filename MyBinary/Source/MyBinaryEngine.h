@@ -8,6 +8,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 
 class MyBinaryEngine final
 {
@@ -41,6 +42,11 @@ private:
 	bool userRequest;
 	bool userOutputRequest;
 
+	/*int insertPos;*/
+
+	size_t typeSymbol;
+
+	bool ConvertRequest;
 
 	std::string letters;
 
