@@ -111,6 +111,17 @@ void MyBinaryEngine::pollEvents()
 					{
 						//Handle backspace (remove last character)
 						this->userInputString.pop_back();
+
+						if (this->userInputString.empty())
+						{
+							this->userInputString.push_back('<');
+						}
+						if (this->userInputString.length() >= 1)
+						{
+							this->userInputString.pop_back();
+							this->userInputString.push_back('<');
+						}
+
 						this->binaryCode_Storage.clear();
 					}
 					else if (this->eventAction.text.unicode == '\r')
