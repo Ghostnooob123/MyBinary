@@ -50,6 +50,7 @@ void MyBinaryEngine::update()
 	  @return void
 	  - Poll events.
 	  - Update mouse position.
+	  - Update MyBinary engine work.
 	*/
 	this->pollEvents();
 	this->updateMousePos();
@@ -63,6 +64,7 @@ void MyBinaryEngine::render()
 	  @return void
 	  - Clear old frames.
 	  - Display frame in the window.
+	  - Display MyBinary engine elements.
 	*/
 
 	//Clear the window
@@ -86,32 +88,17 @@ void MyBinaryEngine::pollEvents()
 		case sf::Event::Closed:
 			this->window->close();
 			break;
-		case sf::Event::KeyPressed:
-			/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-			{
-				if (--this->insertPos < 0)
-				{
-					++this->insertPos;
-				}
-			}	
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			{
-				if (++this->insertPos > this->userInputString.length())
-				{
-					--this->insertPos;
-				}
-			}*/
-			break;
 		case sf::Event::TextEntered:
 			if (this->userRequest)
 			{
 				if (this->eventAction.text.unicode < 128)
 				{
+					this->typeSymbol = 0;
+
 					if (this->eventAction.text.unicode == '\b' && !this->userInputString.empty())
 					{
 						//Handle backspace (remove last character)
 						this->userInputString.pop_back();
-
 						if (this->userInputString.empty())
 						{
 							this->userInputString.push_back('<');
@@ -127,7 +114,6 @@ void MyBinaryEngine::pollEvents()
 					else if (this->eventAction.text.unicode == '\r')
 					{
 						// Enter key pressed
-						//Clear the input string for new input when Enter is pressed
 						std::string tempStr;
 						tempStr = this->binaryCode_Storage.back().getString();
 						if (tempStr.back() == '<')
@@ -158,7 +144,6 @@ void MyBinaryEngine::pollEvents()
 						this->outputText.setPosition(this->outputPanel.getPosition().x + 5.0f, this->outputPanel.getPosition().y + 5.0f);
 
 						this->userRequest = false;
-						/*this->insertPos = 0;*/
 						this->ConvertRequest = true;
 						this->typeSymbol = 0;
 						this->binaryCode_Storage.clear();
@@ -171,12 +156,8 @@ void MyBinaryEngine::pollEvents()
 							this->typeSymbol = 2;
 						}
 
-						//Check if the char is backspace
+						//Check if the char is not 0 or 1 && if input reach the limit
 						if (this->eventAction.text.unicode != '0' && this->eventAction.text.unicode != '1')
-						{
-							continue;
-						}
-						if (this->eventAction.text.unicode == '\b')
 						{
 							continue;
 						}
@@ -184,15 +165,7 @@ void MyBinaryEngine::pollEvents()
 						{
 							continue;
 						}
-						//Append the entered character to the input string
-						
-						//std::string temp;
-						//for (auto& c : this->userInputString)
-						//	if (c != '|')
-						//		temp += c;
-						//this->userInputString = std::move(temp);
-						//this->userInputString.insert(this->insertPos, 1, static_cast<char>(this->eventAction.text.unicode));
-
+						//Append the entered character to the input string && update type symbol
 						if (this->userInputString.length() >= 1)
 						{
 							this->userInputString.pop_back();
@@ -200,8 +173,6 @@ void MyBinaryEngine::pollEvents()
 						this->userInputString += static_cast<char>(this->eventAction.text.unicode);
 						this->binaryCode_Storage.clear();
 						this->userInputString.push_back('<');
-
-						//this->insertPos = static_cast<int>(this->userInputString.length());
 					}
 					//Update the text in the GUI
 					sf::Text userInputText = this->userText;
@@ -234,8 +205,6 @@ void MyBinaryEngine::updateBinaryCode()
 		this->userInputString.clear();
 		this->outputText.setString("");
 		this->binaryCode_Storage.clear();
-
-		/*this->insertPos = 0;*/
 	}
 
 	if (this->ConvertButton.getGlobalBounds().contains(this->mousePosView) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->ConvertRequest)
@@ -249,7 +218,7 @@ void MyBinaryEngine::updateBinaryCode()
 		if (this->typeSymbol != 1 && this->typeSymbol != 2)
 		{
 			sf::Text userInputText = this->userText;
-			userInputText.setString("<");
+			userInputText.setString('<');
 			this->binaryCode_Storage.push_back(userInputText);
 			this->typeSymbol = 1;
 		}
@@ -305,8 +274,6 @@ void MyBinaryEngine::initVariables()
 	this->userInputString = "";
 	this->maxChars = 40;
 	this->userRequest = false;
-
-	/*this->insertPos = 0;*/
 
 	this->typeSymbol = 0;
 
@@ -478,6 +445,10 @@ void MyBinaryEngine::initUIelements()
 }
 void MyBinaryEngine::initMyBinaryLogo()
 {
+	/*
+	  @return void
+	  - Initialize MyBinary logo.
+	*/
 
 	if (!this->logo.loadFromFile("Source/Logo/MyBinary_Logo.png"))
 	{

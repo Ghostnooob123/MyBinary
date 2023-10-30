@@ -42,8 +42,6 @@ private:
 	bool userRequest;
 	bool userOutputRequest;
 
-	/*int insertPos;*/
-
 	size_t typeSymbol;
 
 	bool ConvertRequest;
